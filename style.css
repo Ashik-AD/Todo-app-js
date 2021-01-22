@@ -1,0 +1,32 @@
+* {
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline-color: transparent;
+    outline: none;
+}
+
+body {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 4000;
+    -webkit-font-smoothing: antialiased;
+}
+
+.flex {
+    display: flex;
+}
+.flex-col {
+    flex-direction: column;
+}
+
+.theme-dark {
+    background-color: hsl(235, 21%, 11%);
+    color: hsl(234, 39%, 85%);
+}
+
+.theme-light {
+    background-color: #cee5ff;
+    color: hsl(235, 19%, 35%);
+}
