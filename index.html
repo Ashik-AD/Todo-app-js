@@ -13,53 +13,55 @@
 
   <div id="app" class="theme-dark">
     <div class="app-content">
-      <div class="app-header">
-        <div class="flex">
-          <h1 class="app-title">My Task</h1>
-          <button class="theme-switcher"><img src="./images/icon-sun.svg" alt="sun"></button>
-        </div>
-      </div>
-      <div class="todo-main">
-        <div class="todo-add">
-          <input type="text" name="add-new-item" aria-label="add new todo item" placeholder="Create a new todo...">
-        </div>
-        <div class="todo-item-wrapper">
-          <div class="flex flex-col">
-            <ul class="item-list">
-              <li class="flex">
-                <div class="check-wrapper">
-                  <label for="todo-check">
-                    <input type="checkbox" name="checkmark">
-                    <span class="custome-check"></span>
-                  </label>
-                </div>
-                <p class="todo-title">Complete JavaScript Course</p>
-              </li>
-              <li class="flex">
-                <div class="check-wrapper">
-                  <label for="todo-check">
-                    <input type="checkbox" name="checkmark">
-                    <span class="custome-check"></span>
-                  </label>
-                </div>
-                <p class="todo-title">Start ReactJs Course</p>
-              </li>
-            </ul>
+      <div class="container">
+        <div class="app-header">
+          <div class="flex">
+            <h1 class="app-title">My Task</h1>
+            <button class="theme-switcher border-less"><img src="./images/icon-sun.svg" alt="sun"></button>
           </div>
-          <div class="todo-footer flex">
-            <span class="todo-count">2 items left</span>
-            <div class="act-attach">
-              <button class="btn-all active border-less">All</button>
-              <button class="btn-active border-less">Active</button>
-              <button class="btn-completed border-less">Completed</button>
+        </div>
+        <div class="todo-main">
+          <div class="todo-add">
+            <input type="text" class="dark" name="add-new-item" aria-label="add new todo item" placeholder="Create a new todo...">
+          </div>
+          <div class="todo-item-wrapper dark">
+            <div class="flex flex-col">
+              <ul class="item-list">
+                <li class="flex">
+                  <div class="check-wrapper">
+                    <label for="todo-check">
+                      <input type="checkbox" name="checkmark">
+                      <span class="custome-check"></span>
+                    </label>
+                  </div>
+                  <p class="todo-title">Complete JavaScript Course</p>
+                </li>
+                <li class="flex">
+                  <div class="check-wrapper">
+                    <label for="todo-check">
+                      <input type="checkbox" name="checkmark">
+                      <span class="custome-check"></span>
+                    </label>
+                  </div>
+                  <p class="todo-title">Start ReactJs Course</p>
+                </li>
+              </ul>
             </div>
-            <button class="btn-clear-completed">Clear Completed</button>
+            <div class="todo-footer flex">
+              <span class="todo-count">2 items left</span>
+              <div class="act-attach">
+                <button class="btn-all active border-less btn-dark-hover">All</button>
+                <button class="btn-active border-less btn-dark-hover">Active</button>
+                <button class="btn-completed border-less btn-dark-hover">Completed</button>
+              </div>
+              <button class="btn-clear-completed border-less btn-dark-hover">Clear Completed</button>
+            </div>
           </div>
         </div>
+        <div class="additional">
+          Drag and drop to reorder list
+        </div>
       </div>
-    </div>
-    <div class="additional">
-      Drag and drop to reorder list
     </div>
   </div>
 <!-- 
