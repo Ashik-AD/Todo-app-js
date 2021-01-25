@@ -120,7 +120,8 @@ button {
     box-shadow: 0 2px 15px 0 hsl(233, 22%, 7%);
 }
 .item-list {
-    max-height: 350px;
+    max-height: 300px;
+    overflow-y: scroll;
 }
 .check-wrapper {
     position: relative;
@@ -220,4 +221,12 @@ button.active {
     padding: 5px 10px;
     border-left: 5px solid #ffc107;
     border-radius: 3px;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #216bdb;
+    border-radius: 5px;
 }

@@ -27,7 +27,9 @@ const Todo = function () {
         const todo = new TodoItem(id, obj.name, obj.isComplete);
         if (todo()) {
             storage.push(todo());
-            return localStorage.setItem('todo', JSON.stringify(storage));
+            localStorage.setItem('todo', JSON.stringify(storage));
+            todoItem = storage;
+            return JSON.parse(getItem('todo'))
         }
         else {
             console.log('Faild to add todo');
@@ -35,7 +37,12 @@ const Todo = function () {
         }
     }
     const deleteTodo = (id) => {
-
+        console.log(id)
+        const todoItem = JSON.parse(getItem('todo'));
+        const updatedTodo = [];
+        todoItem.forEach(el => Number(el.id) !== Number(id) ? updatedTodo.push(el) : null);
+        localStorage.setItem('todo', JSON.stringify(updatedTodo));
+        return updatedTodo;
     }
     return {
         setState: (name, value) => {
@@ -47,6 +54,7 @@ const Todo = function () {
             state.theme = theme;
         },
         addTodo,
+        deleteTodo,
         state,
     }
 }
@@ -90,7 +98,7 @@ const App = function () {
         </div>
         <span>
             <p class="todo-title">${props.name}</p>
-            <button data-id=${props.id} class="btn-delete border-less"><img src="./images/icon-cross.svg" alt="delete todo" /></button>
+            <button class="btn-delete border-less"><img src="./images/icon-cross.svg" class="icon-delete" data-id=${props.id} alt="delete todo" /></button>
         </span>
       </li>`;
         return markUp;
@@ -150,8 +158,10 @@ const Controller = (function (Todo, App) {
         element.todoAddWrp.querySelector('.danger') ? element.todoAddWrp.removeChild(element.todoAddWrp.lastChild) : null;
         if (eve.keyCode === 13) {
             if (eve.target.value) {
-                Todo().addTodo(getInput())
+                const addTodo = Todo().addTodo(getInput())
                 clearInput();
+                state.todoItem = addTodo;
+                App().renderList(state.todoItem)
                 console.log('Todo is added')
             }
             else {
@@ -172,8 +182,18 @@ const Controller = (function (Todo, App) {
         return;
     })
 
+    // Delete Todo item
+    element.todoListWrp.addEventListener('click', eve => {
+        if (eve.target.classList.contains('icon-delete')) {
+            const newTodo = Todo().deleteTodo(eve.target.dataset.id);
+            state.todoItem = newTodo;
+            App().renderList(state.todoItem);
+            countTodo()
+        }
+    })
+
     //count activ todo
-    const countTodo = () => {
+    function countTodo(){
         let count = 0;
         if (state.todoItem) {
             state.todoItem.forEach(el => {
