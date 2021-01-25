@@ -11,22 +11,32 @@
 </head>
 <body>
 
-  <div id="app" class="theme-dark">
+  <div id="app" class="th">
     <div class="app-content">
       <div class="container">
         <div class="app-header">
           <div class="flex">
             <h1 class="app-title">My Task</h1>
-            <button class="theme-switcher border-less"><img src="./images/icon-sun.svg" alt="sun"></button>
+            <button class="theme-switcher border-less"><img src="./images/icon-sun.svg" alt="sun" class=""></button>
           </div>
         </div>
         <div class="todo-main">
           <div class="todo-add">
-            <input type="text" class="dark" name="add-new-item" aria-label="add new todo item" placeholder="Create a new todo...">
+            <input type="text" class="dr" name="add-new-item" aria-label="add new todo item" placeholder="Create a new todo...">
+            <img src="./images/icon-forward.svg" alt="Enter" class="icon-enter">
           </div>
-          <div class="todo-item-wrapper dark">
+          <div class="todo-item-wrapper dr">
             <div class="flex flex-col">
               <ul class="item-list">
+                <li class="flex todo-complete">
+                  <div class="check-wrapper">
+                    <label for="todo-check">
+                      <input type="checkbox" name="checkmark">
+                      <span class="custome-check"></span>
+                    </label>
+                  </div>
+                  <p class="todo-title">Degin E-commerce website</p>
+                </li>
                 <li class="flex">
                   <div class="check-wrapper">
                     <label for="todo-check">
@@ -50,11 +60,11 @@
             <div class="todo-footer flex">
               <span class="todo-count">2 items left</span>
               <div class="act-attach">
-                <button class="btn-all active border-less btn-dark-hover">All</button>
-                <button class="btn-active border-less btn-dark-hover">Active</button>
-                <button class="btn-completed border-less btn-dark-hover">Completed</button>
+                <button class="btn-all active border-less btn-theme-hover">All</button>
+                <button class="btn-active border-less btn-theme-hover">Active</button>
+                <button class="btn-completed border-less btn-theme-hover">Completed</button>
               </div>
-              <button class="btn-clear-completed border-less btn-dark-hover">Clear Completed</button>
+              <button class="btn-clear-completed border-less btn-theme-hover">Clear Completed</button>
             </div>
           </div>
         </div>
