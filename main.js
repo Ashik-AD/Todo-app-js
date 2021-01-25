@@ -1,8 +1,42 @@
 const Todo = function () {
     const state = {
-        theme: localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark',
+        theme: getItem('theme') ? getItem('theme') : 'dark',
+        todoItem: getItem('todo') ? JSON.parse(getItem('todo')) : []
     }
-    
+    function getItem(key) {
+        return localStorage.getItem(key);
+    }
+    const TodoItem = function (id, name, isComplete) {
+        this.id = id;
+        this.name = name;
+        this.isComplete = isComplete;
+        return () => {
+            if (this.id && this.name) {
+                return {
+                    id: this.id,
+                    name: this.name,
+                    isComplete: this.isComplete
+                }
+            }
+            return false;
+        }
+    }
+    const addTodo = (obj) => {
+        const storage = getItem('todo') ? JSON.parse(getItem('todo')) : [];
+        const id = storage.length + 1;
+        const todo = new TodoItem(id, obj.name, obj.isComplete);
+        if (todo()) {
+            storage.push(todo());
+            return localStorage.setItem('todo', JSON.stringify(storage));
+        }
+        else {
+            console.log('Faild to add todo');
+            return false;
+        }
+    }
+    const deleteTodo = (id) => {
+
+    }
     return {
         setState: (name, value) => {
             state[name] = value;
@@ -12,6 +46,7 @@ const Todo = function () {
             localStorage.setItem('theme', theme);
             state.theme = theme;
         },
+        addTodo,
         state,
     }
 }
@@ -21,10 +56,22 @@ const App = function () {
         btnTheme: document.querySelector('.theme-switcher'),
         dark: document.querySelectorAll('.dr'),
         app: document.querySelector('.th'),
-        themeIcon: document.querySelector('.theme-switcher img')
+        themeIcon: document.querySelector('.theme-switcher img'),
+        input: document.querySelector('.input-todo'),
+        iconEnter: document.querySelector('.icon-enter'),
+        todoAddWrp: document.querySelector('.todo-add'),
+        todoListWrp: document.querySelector('.item-list'),
+        todoCount: document.querySelector('.todo-count')
+    }
+    const changeThemeIcon = theme => {
+        theme === 'dark' ?
+            DOMS.themeIcon.src = './images/icon-sun.svg'
+            :
+            DOMS.themeIcon.src = './images/icon-moon.svg'
     }
     const currentTheme = theme => {
         DOMS.app.classList.add(`theme-${theme}`);
+        changeThemeIcon(theme)
         if (theme === 'dark') {
             DOMS.dark.forEach(el => el.classList.add('dark'))
         }
@@ -32,8 +79,30 @@ const App = function () {
             DOMS.dark.forEach(el => el.classList.add('light'))
         }
     }
+    const htmlMarkup = (props) =>{
+        const markUp = `
+        <li class="flex todo-${props.isComplete}">
+        <div class="check-wrapper">
+          <label for="todo-check">
+            <input type="checkbox" name="checkmark">
+            <span class="custome-check"></span>
+          </label>
+        </div>
+        <span>
+            <p class="todo-title">${props.name}</p>
+            <button data-id=${props.id} class="btn-delete border-less"><img src="./images/icon-cross.svg" alt="delete todo" /></button>
+        </span>
+      </li>`;
+        return markUp;
+    }
+    const renderList = (arr) => {
+        DOMS.todoListWrp.innerHTML = '';
+        arr.forEach(el => {
+            DOMS.todoListWrp.insertAdjacentHTML('beforeend', htmlMarkup(el));
+        })
+    }
     const reflectTheme = theme => {
-        const themeIcon = theme === 'dark' ? DOMS.themeIcon.src = './images/icon-sun.svg' : DOMS.themeIcon.src = './images/icon-moon.svg'
+        changeThemeIcon(theme)
         if (theme === 'dark') {
             DOMS.app.classList.replace('theme-light', 'theme-dark')
             DOMS.dark.forEach(el => el.classList.replace('light','dark'))
@@ -42,10 +111,18 @@ const App = function () {
             DOMS.dark.forEach(el => el.classList.replace('dark', 'light'))
         }
     }
+    const alertMsg = (msg, type, where) =>{
+        const markUp = `<div class=${type}>${msg}</div>`;
+        const parent = where.insertAdjacentHTML('beforeend', markUp);
+        setTimeout(() => { where.removeChild(where.lastChild)}, 5000);
+        return parent;
+    }
     return {
         Element: DOMS,
         reflectTheme,
-        currentTheme
+        currentTheme,
+        alertMsg,
+        renderList,
     }
 }
 
@@ -55,18 +132,70 @@ const Controller = (function (Todo, App) {
     // Html Element
     const element = App().Element;
     // Theme Switcher
-    element.btnTheme.addEventListener('click', eve => {
+    element.btnTheme.addEventListener('click', () => {
         const prevTheme = state.theme === 'dark' ? 'light' : 'dark';
         const setTheme = Todo().setState('theme', prevTheme);
         Todo().changeTheme(setTheme.theme);
         state = setTheme;
         App().reflectTheme(state.theme)
     })
+    const getInput = () => {
+        return {
+            name: element.input.value,
+            isComplete: false
+        }
+    }
+    // When user press enter button
+    element.input.addEventListener('keyup', eve => {
+        element.todoAddWrp.querySelector('.danger') ? element.todoAddWrp.removeChild(element.todoAddWrp.lastChild) : null;
+        if (eve.keyCode === 13) {
+            if (eve.target.value) {
+                Todo().addTodo(getInput())
+                clearInput();
+                console.log('Todo is added')
+            }
+            else {
+                App().alertMsg('Please enter todo name', 'danger', element.todoAddWrp);
+                return;
+            }
+        }
+        return;
+    })
+    // when user click right arrow
+    element.iconEnter.addEventListener('click', () => {
+        const value = element.input.value;
+        if (value) {
+            Todo().addTodo(getInput())
+            clearInput()
+            console.log('Todo is added')
+        }
+        return;
+    })
 
+    //count activ todo
+    const countTodo = () => {
+        let count = 0;
+        if (state.todoItem) {
+            state.todoItem.forEach(el => {
+                if (!el.isComplete) {
+                    count++;
+                }
+            })
+        }
+        element.todoCount.innerHTML = `${count} item${count > 1 ? 's' : ''} left`;
+    }
+    // Clear input
+    function clearInput() {
+        element.input.value = '';
+    }
     return {
-        theme:()=> App().currentTheme(state.theme)
+        init: () => {
+            App().currentTheme(state.theme)
+            countTodo()
+            App().renderList(state.todoItem)
+        } 
     }
 })(Todo, App);
 
-Controller.theme()
+Controller.init()
 

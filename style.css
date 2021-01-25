@@ -171,6 +171,15 @@ button {
     border-bottom: 1px solid #cee5ff18;
 }
 
+.btn-delete {
+    position: absolute;
+    right: 20px;
+    margin-top: -15px;
+    opacity: 0;
+}
+.item-list li:hover .btn-delete {
+    opacity: 1;
+}
 .todo-footer {
     padding: 15px 10px;
     justify-content: space-between;
@@ -203,4 +212,12 @@ button.active {
     image-rendering: optimizeQuality;
     -webkit-filter: invert(.8);
             filter: invert(.8);
+}
+
+.danger {
+    background-color: #ffc822c2;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-left: 5px solid #ffc107;
+    border-radius: 3px;
 }
