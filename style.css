@@ -162,8 +162,20 @@ button {
     text-decoration: line-through;
     color: #838383;
 }
-.check-wrapper input[type=checkbox]:checked ~ .custome-check::before {
-    background: linear-gradient(120deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+.todo-complete .custome-check::before {
+    background: transparent;
+}
+.todo-complete .custome-check::after {
+    position: absolute;
+    width: 8px;
+    height: 4px;
+    content: '';
+    border: 2px solid #fff;
+    top: 6px;
+    left: 5px;
+    border-top: 0;
+    border-right: 0;
+    transform: rotate(-45deg);
 }
 .todo-item-wrapper .item-list li {
     padding: 20px 15px;
@@ -214,19 +226,61 @@ button.active {
     -webkit-filter: invert(.8);
             filter: invert(.8);
 }
-
-.danger {
-    background-color: #ffc822c2;
-    color: #ffffff;
-    padding: 5px 10px;
-    border-left: 5px solid #ffc107;
-    border-radius: 3px;
+.icon-enter:hover {
+    cursor: pointer;
+    border-color: #216bdb;
+    -webkit-filter: invert(1);
+            filter: invert(1);
 }
 
+.danger, .info {
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    -webkit-animation-name: fadeDown;
+            animation-name: fadeDown;
+    -webkit-animation-duration: .5s;
+            animation-duration: .5s;
+    transition: all .4s ease-in-out;
+}
+@-webkit-keyframes fadeDown {
+    from {
+        margin-top: -20px;
+        opacity: 0.4;
+    }
+    to {
+        margin-top: 0;
+        opacity: 1;
+    }
+}
+@keyframes fadeDown {
+    from {
+        margin-top: -20px;
+        opacity: 0.4;
+    }
+    to {
+        margin-top: 0;
+        opacity: 1;
+    }
+}
+.danger {
+    background-color: #ffc822c2;
+    border-left: 5px solid #ffc107;
+}
+.info {
+    background-color: #229cffc2;
+    border-left: 5px solid #078fff;
+}
 ::-webkit-scrollbar {
     width: 5px;
 }
 ::-webkit-scrollbar-thumb {
     background-color: #216bdb;
     border-radius: 5px;
+}
+
+.user-info {
+    position: absolute;
+    top: 20px;
+    left: 50%;
 }

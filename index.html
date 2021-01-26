@@ -27,7 +27,7 @@
           </div>
           <div class="todo-item-wrapper dr">
             <div class="flex flex-col">
-              <ul class="item-list">
+              <ul class="item-list" dropzone="true">
                 <!-- <li class="flex todo-complete">
                   <div class="check-wrapper">
                     <label for="todo-check">
@@ -60,9 +60,9 @@
             <div class="todo-footer flex">
               <span class="todo-count">2 items left</span>
               <div class="act-attach">
-                <button class="btn-all active border-less btn-theme-hover">All</button>
-                <button class="btn-active border-less btn-theme-hover">Active</button>
-                <button class="btn-completed border-less btn-theme-hover">Completed</button>
+                <button class="btn-all active border-less btn-theme-hover" data-label="all">All</button>
+                <button class="btn-active border-less btn-theme-hover" data-label="active">Active</button>
+                <button class="btn-completed border-less btn-theme-hover" data-label="completed">Completed</button>
               </div>
               <button class="btn-clear-completed border-less btn-theme-hover">Clear Completed</button>
             </div>
@@ -73,6 +73,7 @@
         </div>
       </div>
     </div>
+    <div class="user-info"></div>
   </div>
 <!-- 
   <div class="attribution">

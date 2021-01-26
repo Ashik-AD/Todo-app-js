@@ -23,12 +23,12 @@ const Todo = function () {
     }
     const addTodo = (obj) => {
         const storage = getItem('todo') ? JSON.parse(getItem('todo')) : [];
-        const id = storage.length + 1;
+        const id = storage.length > 0 ? parseInt(storage[storage.length - 1].id) + 1: 1;
         const todo = new TodoItem(id, obj.name, obj.isComplete);
         if (todo()) {
             storage.push(todo());
             localStorage.setItem('todo', JSON.stringify(storage));
-            todoItem = storage;
+            state.todoItem = storage;
             return JSON.parse(getItem('todo'))
         }
         else {
@@ -37,12 +37,62 @@ const Todo = function () {
         }
     }
     const deleteTodo = (id) => {
-        console.log(id)
         const todoItem = JSON.parse(getItem('todo'));
         const updatedTodo = [];
         todoItem.forEach(el => Number(el.id) !== Number(id) ? updatedTodo.push(el) : null);
         localStorage.setItem('todo', JSON.stringify(updatedTodo));
+        state.todoItem = updatedTodo;
         return updatedTodo;
+    }
+    const markedComplete = id => {
+        const todoList = state.todoItem;
+        const marked = todoList.map(el => {
+            if (parseInt(el.id) === parseInt(id)) {
+                el.isComplete = true;
+            }
+            return el;
+        });
+        localStorage.setItem('todo', JSON.stringify(marked));
+        state.todoItem = marked;
+        return marked;
+    }
+
+    const selectTodoGroup = which => {
+        const todoItem = state.todoItem;
+        switch (which) {
+            case 'all':
+                const all = todoItem.map(el => el);
+                return all;
+            case 'active':
+                const active = [];
+                todoItem.forEach(el => {
+                    if (!el.isComplete) {
+                        active.push(el)
+                    }
+                });
+                return active;
+            case 'completed':
+                const completed = [];
+                todoItem.forEach(el => {
+                    if (el.isComplete) {
+                        completed.push(el)
+                    }
+                })
+                return completed;
+           
+        }
+    }
+    const clearCompletedItem = () => {
+        const todoItem = state.todoItem;
+        const newTodo = [];
+        todoItem.forEach(el => {
+            if (!el.isComplete) {
+                newTodo.push(el)
+            }
+        })
+        localStorage.setItem('todo', JSON.stringify(newTodo));
+        state.todoItem = newTodo;
+        return newTodo;
     }
     return {
         setState: (name, value) => {
@@ -55,6 +105,9 @@ const Todo = function () {
         },
         addTodo,
         deleteTodo,
+        markedComplete,
+        selectTodoGroup,
+        clearCompletedItem,
         state,
     }
 }
@@ -69,7 +122,9 @@ const App = function () {
         iconEnter: document.querySelector('.icon-enter'),
         todoAddWrp: document.querySelector('.todo-add'),
         todoListWrp: document.querySelector('.item-list'),
-        todoCount: document.querySelector('.todo-count')
+        todoCount: document.querySelector('.todo-count'),
+        btnAllAcCom: document.querySelectorAll('.act-attach button'),
+        btnClearCompleted: document.querySelector('.btn-clear-completed')
     }
     const changeThemeIcon = theme => {
         theme === 'dark' ?
@@ -89,11 +144,11 @@ const App = function () {
     }
     const htmlMarkup = (props) =>{
         const markUp = `
-        <li class="flex todo-${props.isComplete}">
+        <li class="flex todo-${props.isComplete ? 'complete' : 'uncomplete'}" dragable="true" data-set=${props.id}>
         <div class="check-wrapper">
           <label for="todo-check">
-            <input type="checkbox" name="checkmark">
-            <span class="custome-check"></span>
+            <input type="checkbox" name="checkmark" checked=${props.isComplete}>
+            <span class="custome-check" data-id=${props.id}></span>
           </label>
         </div>
         <span>
@@ -146,23 +201,28 @@ const Controller = (function (Todo, App) {
         Todo().changeTheme(setTheme.theme);
         state = setTheme;
         App().reflectTheme(state.theme)
-    })
+    });
     const getInput = () => {
         return {
             name: element.input.value,
             isComplete: false
         }
     }
+
+    const addTodo = () => {
+        const addTodo = Todo().addTodo(getInput())
+        clearInput();
+        state.todoItem = addTodo;
+        App().renderList(state.todoItem)
+        countTodo();
+        console.log('Todo is added')
+    }
     // When user press enter button
     element.input.addEventListener('keyup', eve => {
         element.todoAddWrp.querySelector('.danger') ? element.todoAddWrp.removeChild(element.todoAddWrp.lastChild) : null;
         if (eve.keyCode === 13) {
             if (eve.target.value) {
-                const addTodo = Todo().addTodo(getInput())
-                clearInput();
-                state.todoItem = addTodo;
-                App().renderList(state.todoItem)
-                console.log('Todo is added')
+                addTodo()
             }
             else {
                 App().alertMsg('Please enter todo name', 'danger', element.todoAddWrp);
@@ -175,9 +235,7 @@ const Controller = (function (Todo, App) {
     element.iconEnter.addEventListener('click', () => {
         const value = element.input.value;
         if (value) {
-            Todo().addTodo(getInput())
-            clearInput()
-            console.log('Todo is added')
+            addTodo()
         }
         return;
     })
@@ -192,7 +250,37 @@ const Controller = (function (Todo, App) {
         }
     })
 
-    //count activ todo
+    // Marked Completed;
+    element.todoListWrp.addEventListener('click', eve => {
+        if (eve.target.classList.contains('custome-check')) {
+            const id = eve.target.dataset.id;
+            const marked = Todo().markedComplete(id);
+            state.todoItem = marked;
+            App().renderList(state.todoItem);
+            countTodo();
+        }
+    })
+
+    // All, Active, Completed Todo
+    element.btnAllAcCom.forEach(el => {
+        el.addEventListener('click', eve => {
+            const label = eve.target.dataset.label;
+            const getTodo = Todo().selectTodoGroup(label);
+            if (getTodo.length > 0) {
+                App().renderList(getTodo);
+            }
+            else {
+                App().alertMsg('0 item found', 'info', document.querySelector('.user-info'));
+            }
+        });
+    })
+    // Clear Completed Todo
+    element.btnClearCompleted.addEventListener('click', () => {
+        const newTodo = Todo().clearCompletedItem();
+        state.todoItem = newTodo;
+        App().renderList(state.todoItem);
+    })
+    //count active todo
     function countTodo(){
         let count = 0;
         if (state.todoItem) {
