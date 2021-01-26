@@ -144,7 +144,7 @@ const App = function () {
     }
     const htmlMarkup = (props) =>{
         const markUp = `
-        <li class="flex todo-${props.isComplete ? 'complete' : 'uncomplete'}" dragable="true" data-set=${props.id}>
+        <li class="flex todo-${props.isComplete ? 'complete' : 'uncomplete'}" draggable="true" data-id=${props.id}>
         <div class="check-wrapper">
           <label for="todo-check">
             <input type="checkbox" name="checkmark" checked=${props.isComplete}>
@@ -180,6 +180,7 @@ const App = function () {
         setTimeout(() => { where.removeChild(where.lastChild)}, 5000);
         return parent;
     }
+
     return {
         Element: DOMS,
         reflectTheme,
@@ -266,6 +267,9 @@ const Controller = (function (Todo, App) {
         el.addEventListener('click', eve => {
             const label = eve.target.dataset.label;
             const getTodo = Todo().selectTodoGroup(label);
+            const current = document.querySelector('.act-attach .active');
+            current.classList.remove('active');
+            el.classList.add('active')
             if (getTodo.length > 0) {
                 App().renderList(getTodo);
             }
@@ -274,6 +278,7 @@ const Controller = (function (Todo, App) {
             }
         });
     })
+
     // Clear Completed Todo
     element.btnClearCompleted.addEventListener('click', () => {
         const newTodo = Todo().clearCompletedItem();
@@ -296,6 +301,38 @@ const Controller = (function (Todo, App) {
     function clearInput() {
         element.input.value = '';
     }
+    
+    // Drag and Drop
+    window.addEventListener('DOMContentLoaded', () => {
+        let dragged, where, parent;
+        const dr = []
+        element.todoListWrp.querySelectorAll('.flex').forEach(el => {
+            dr.push(el)
+        })
+        dr.forEach(el => {
+            el.addEventListener('dragstart', eve => {
+                dragged = eve.target;
+            })
+        })
+        element.todoListWrp.addEventListener('dragover', eve => {
+            eve.preventDefault();
+            where = eve.target;
+        })
+        element.todoListWrp.addEventListener('drag', eve => {
+            eve.preventDefault();
+            parent = eve.currentTarget;
+        })
+        element.todoListWrp.addEventListener('dragend', eve => {
+            eve.preventDefault();
+            const rs = [];
+            parent.querySelectorAll('.flex').forEach(el => rs.push(el))
+            const index = rs.findIndex(el => el.dataset.id === where.dataset.id);
+            element.todoListWrp.insertBefore(dragged, element.todoListWrp.children[index])
+            dragged = '', where = '', parent = '';
+        })
+        
+    })
+
     return {
         init: () => {
             App().currentTheme(state.theme)
