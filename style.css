@@ -292,6 +292,12 @@ button.active {
     top: 20px;
     left: 50%;
 }
+.first-time {
+    font-size: 18px;
+    padding: 10px;
+    font-weight: 500;
+    margin: 50px auto;
+}
 @media(max-width: 1199.98px){
     .app-content {
         width: 60%;

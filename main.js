@@ -160,6 +160,11 @@ const App = function () {
     }
     const renderList = (arr) => {
         DOMS.todoListWrp.innerHTML = '';
+        console.log(arr)
+        if (!arr.length) {
+            DOMS.todoListWrp.innerHTML = `<h1 class="first-time">You can add your task clicking above typing box.🙂💙❤</h1>`;
+            DOMS.input.focus();
+        }
         arr.forEach(el => {
             DOMS.todoListWrp.insertAdjacentHTML('beforeend', htmlMarkup(el));
         })
